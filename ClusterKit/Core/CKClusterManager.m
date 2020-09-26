@@ -39,6 +39,7 @@ BOOL CLLocationCoordinateEqual(CLLocationCoordinate2D coordinate1, CLLocationCoo
 @implementation CKClusterManager {
     NSMutableSet<CKCluster *> *_clusters;
     dispatch_queue_t _queue;
+    bool firstRun;
 }
 
 - (instancetype)init {
@@ -52,6 +53,7 @@ BOOL CLLocationCoordinateEqual(CLLocationCoordinate2D coordinate1, CLLocationCoo
         _clusters = [NSMutableSet set];
         
         _queue = dispatch_queue_create("com.hulab.cluster", DISPATCH_QUEUE_CONCURRENT);
+        firstRun = YES;
     }
     return self;
 }
@@ -162,6 +164,11 @@ BOOL CLLocationCoordinateEqual(CLLocationCoordinate2D coordinate1, CLLocationCoo
     if (!self.tree || MKMapRectIsNull(visibleMapRect) || MKMapRectIsEmpty(visibleMapRect)) {
         return;
     }
+//    if (firstRun == NO) {
+//        return;
+//    }
+    firstRun = NO;
+    NSLog(@"Updating RECT CLUSTER");
     
     MKMapRect clusterMapRect = MKMapRectWorld;
     if (self.marginFactor != kCKMarginFactorWorld) {

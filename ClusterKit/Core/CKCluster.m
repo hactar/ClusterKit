@@ -66,13 +66,18 @@ static Class clusterClass;
 - (instancetype)init{
     self = [super init];
     if (self) {
-        _annotations = [NSMutableOrderedSet orderedSet];
+        _annotations = [[NSMutableOrderedSet orderedSet] retain];
         _coordinate = kCLLocationCoordinate2DInvalid;
         _bounds = MKMapRectNull;
         _invalidate_bounds = NO;
         clusterClass = [CKCluster class];
     }
     return self;
+}
+
+- (void)dealloc {
+    [super dealloc];
+    [_annotations release];
 }
 
 - (NSArray<id<MKAnnotation>> *)annotations {
@@ -101,18 +106,6 @@ static Class clusterClass;
 
 - (id<MKAnnotation>)firstAnnotation {
     return _annotations.firstObject;
-}
-
-- (id<MKAnnotation>)lastAnnotation {
-    return _annotations.firstObject;
-}
-
-- (id<MKAnnotation>)annotationAtIndex:(NSUInteger)index {
-    return _annotations[index];
-}
-
-- (id<MKAnnotation>)objectAtIndexedSubscript:(NSUInteger)index {
-    return _annotations[index];
 }
 
 - (void)addAnnotation:(id<MKAnnotation>)annotation {
@@ -146,18 +139,35 @@ static Class clusterClass;
 }
 
 - (BOOL)isEqualToCluster:(CKCluster *)cluster {
-//    if (_annotations.count != cluster->_annotations.count) {
-//        return false;
-//    }
-    return [_annotations isEqual:cluster->_annotations];
+    //    if (_annotations.count != cluster->_annotations.count) {
+    //        return false;
+    //    }
+    
+    __block bool differenceFound = false;
+    [_annotations enumerateObjectsUsingBlock:^(id<MKAnnotation>  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        __block BOOL blockstop = false;
+        [cluster->_annotations enumerateObjectsUsingBlock:^(id<MKAnnotation>  _Nonnull obj2, NSUInteger idx2, BOOL * _Nonnull stop2) {
+            if (obj.coordinate.latitude != obj2.coordinate.latitude) {
+                differenceFound = true;
+                blockstop = true;
+                stop2 = true;
+                
+            }
+        }];
+        stop = blockstop;
+
+    }];
+    return !differenceFound;
+    //return [_annotations isEqual:cluster->_annotations];
 }
 
+
 - (BOOL)intersectsCluster:(CKCluster *)cluster {
-    return [_annotations intersectsOrderedSet:cluster->_annotations];
+    return [_annotations intersectsSet:cluster->_annotations];
 }
 
 - (BOOL)isSubsetOfCluster:(CKCluster *)cluster {
-    return [_annotations isSubsetOfOrderedSet:cluster->_annotations];
+    return [_annotations isSubsetOfSet:cluster->_annotations];
 }
 
 #pragma mark <CKCluster>
@@ -182,12 +192,6 @@ static Class clusterClass;
         return _annotations.firstObject.subtitle;
     }
     return nil;
-}
-
-#pragma mark <NSFastEnumeration>
-
-- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id  _Nullable __unsafe_unretained [])buffer count:(NSUInteger)len {
-    return [_annotations countByEnumeratingWithState:state objects:buffer count:len];
 }
 
 @end
