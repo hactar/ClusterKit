@@ -55,9 +55,13 @@ NSComparisonResult MKMapSizeCompare(MKMapSize size1, MKMapSize size2) {
     
     MKMapRect _bounds;
     BOOL _invalidate_bounds;
+    
+    
+    
 }
 
 @synthesize coordinate = _coordinate;
+static Class clusterClass;
 
 - (instancetype)init{
     self = [super init];
@@ -66,6 +70,7 @@ NSComparisonResult MKMapSizeCompare(MKMapSize size1, MKMapSize size2) {
         _coordinate = kCLLocationCoordinate2DInvalid;
         _bounds = MKMapRectNull;
         _invalidate_bounds = NO;
+        clusterClass = [CKCluster class];
     }
     return self;
 }
@@ -134,13 +139,17 @@ NSComparisonResult MKMapSizeCompare(MKMapSize size1, MKMapSize size2) {
     if (object == self) {
         return YES;
     }
-    if (![object isKindOfClass:[CKCluster class]]) {
+    NSObject *casted = object;
+    if (!casted->isa == clusterClass) {
         return NO;
     }
     return [self isEqualToCluster:object];
 }
 
 - (BOOL)isEqualToCluster:(CKCluster *)cluster {
+//    if (_annotations.count != cluster->_annotations.count) {
+//        return false;
+//    }
     return [_annotations isEqual:cluster->_annotations];
 }
 

@@ -23,7 +23,6 @@
 #import "CKClusterManager.h"
 #import "CKQuadTree.h"
 #import "CKMap.h"
-
 const double kCKMarginFactorWorld = -1;
 
 BOOL CLLocationCoordinateEqual(CLLocationCoordinate2D coordinate1, CLLocationCoordinate2D coordinate2) {
@@ -201,6 +200,8 @@ BOOL CLLocationCoordinateEqual(CLLocationCoordinate2D coordinate1, CLLocationCoo
     
     [_clusters minusSet:oldClusters];
     [_clusters unionSet:newClusters];
+    
+
 }
 
 - (void)setSelectedCluster:(CKCluster *)selectedCluster animated:(BOOL)animated {

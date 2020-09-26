@@ -145,7 +145,7 @@ MK_EXTERN NSComparisonResult MKMapSizeCompare(MKMapSize size1, MKMapSize size2);
  @param cluster The cluster to be compared to the receiver. May be nil, in which case this method returns NO.
  @return YES if the receiver and the given cluster are equal, otherwise NO.
  */
-- (BOOL)isEqualToCluster:(CKCluster *)cluster;
+- (BOOL)isEqualToCluster:(CKCluster *)cluster __attribute__((objc_direct));
 
 /**
  Returns a Boolean value that indicates whether at least one annotion in the receiving cluster is also present in another given cluster.
@@ -153,7 +153,7 @@ MK_EXTERN NSComparisonResult MKMapSizeCompare(MKMapSize size1, MKMapSize size2);
  @param cluster The other cluster
  @return YES if at least one annotation in the receiving cluster is also present in other, otherwise NO.
  */
-- (BOOL)intersectsCluster:(CKCluster *)cluster;
+- (BOOL)intersectsCluster:(CKCluster *)cluster __attribute__((objc_direct));
 
 /**
  Returns a Boolean value that indicates whether every annotation in the receiving cluster is also present in another given cluster.
@@ -161,7 +161,7 @@ MK_EXTERN NSComparisonResult MKMapSizeCompare(MKMapSize size1, MKMapSize size2);
  @param cluster The cluster with which to compare the receiving cluster.
  @return YES if every annotation in the receiving cluster is also present in other, otherwise NO.
  */
-- (BOOL)isSubsetOfCluster:(CKCluster *)cluster;
+- (BOOL)isSubsetOfCluster:(CKCluster *)cluster __attribute__((objc_direct));
 
 @end
 
