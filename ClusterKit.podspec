@@ -24,10 +24,17 @@ Pod::Spec.new do |s|
   s.platform     = :ios, '7.0'
   s.requires_arc = true
   s.default_subspecs = 'Core'
-  
+  non_arc_files = 'ClusterKit/Core/CKCluster.m'  
   s.subspec 'Core' do |ss|
-  	ss.frameworks = 'MapKit'
+    ss.frameworks = 'MapKit'
     ss.source_files = 'ClusterKit/ClusterKit.h', 'ClusterKit/Core/**/*.{h,m}'
+    ss.exclude_files = non_arc_files
+    ss.dependency 'ClusterKit/no-arc'
+  end
+
+  s.subspec 'no-arc' do |sna|
+    sna.requires_arc = false
+    sna.source_files = non_arc_files
   end
   
   s.subspec 'MapKit' do |ss|
