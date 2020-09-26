@@ -139,8 +139,7 @@ static Class clusterClass;
     if (object == self) {
         return YES;
     }
-    NSObject *casted = object;
-    if (!casted->isa == clusterClass) {
+    if (![object isKindOfClass:clusterClass]) {
         return NO;
     }
     return [self isEqualToCluster:object];
@@ -236,83 +235,6 @@ static Class clusterClass;
     return CLLocationCoordinate2DMake(latitude / self.count, longitude / self.count);
 }
 
-
-@end
-
-#pragma mark - Nearest Centroid Cluster
-
-@implementation CKNearestCentroidCluster {
-    CLLocationCoordinate2D _center;
-}
-
-- (void)addAnnotation:(id<MKAnnotation>)annotation {
-    if (![_annotations containsObject:annotation]) {
-        [_annotations addObject:annotation];
-        
-        _center = [self coordinateByAddingAnnotation:annotation];
-        self.coordinate = [self coordinateByDistanceSort];
-        
-        _bounds = MKMapRectByAddingPoint(_bounds, MKMapPointForCoordinate(annotation.coordinate));
-    }
-}
-
-- (void)removeAnnotation:(id<MKAnnotation>)annotation {
-    if ([_annotations containsObject:annotation]) {
-        [_annotations removeObject:annotation];
-        
-        _center = [self coordinateByRemovingAnnotation:annotation];
-        self.coordinate = [self coordinateByDistanceSort];
-        
-        _invalidate_bounds = YES;
-    }
-}
-
-- (CLLocationCoordinate2D)coordinateByDistanceSort {
-    [_annotations sortUsingComparator:^NSComparisonResult(id<MKAnnotation> _Nonnull obj1, id<MKAnnotation> _Nonnull obj2) {
-        double d1 = CKDistance(self->_center, obj1.coordinate);
-        double d2 = CKDistance(self->_center, obj2.coordinate);
-        if (d1 > d2) return NSOrderedDescending;
-        if (d1 < d2) return NSOrderedAscending;
-        return NSOrderedSame;
-    }];
-    
-    return _annotations.firstObject.coordinate;
-}
-
-@end
-
-#pragma mark - Bottom Cluster
-
-@implementation CKBottomCluster
-
-- (void)addAnnotation:(id<MKAnnotation>)annotation {
-    if (![_annotations containsObject:annotation]) {
-        NSUInteger index = [_annotations indexOfObject:annotation
-                                         inSortedRange:NSMakeRange(0, _annotations.count)
-                                               options:NSBinarySearchingInsertionIndex
-                                       usingComparator:^NSComparisonResult(id<MKAnnotation> _Nonnull obj1, id<MKAnnotation> _Nonnull obj2) {
-                                           if (obj1.coordinate.latitude > obj2.coordinate.latitude) return NSOrderedDescending;
-                                           if (obj1.coordinate.latitude < obj2.coordinate.latitude) return NSOrderedAscending;
-                                           return NSOrderedSame;
-                                       }];
-        
-        [_annotations insertObject:annotation atIndex:index];
-        
-        self.coordinate = _annotations.firstObject.coordinate;
-        
-        _bounds = MKMapRectByAddingPoint(_bounds, MKMapPointForCoordinate(annotation.coordinate));
-    }
-}
-
-- (void)removeAnnotation:(id<MKAnnotation>)annotation {
-    if ([_annotations containsObject:annotation]) {
-        [_annotations removeObject:annotation];
-        
-        self.coordinate = _annotations.firstObject.coordinate;
-        
-        _invalidate_bounds = YES;
-    }
-}
 
 @end
 

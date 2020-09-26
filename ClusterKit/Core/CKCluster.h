@@ -174,23 +174,5 @@ MK_EXTERN NSComparisonResult MKMapSizeCompare(MKMapSize size1, MKMapSize size2);
 
 @end
 
-#pragma mark - Nearest Centroid Cluster
-
-/**
- Cluster with coordinate at the nearest annotation from centroid.
- */
-@interface CKNearestCentroidCluster : CKCentroidCluster
-
-@end
-
-#pragma mark - Bottom Cluster
-
-/**
- Cluster with coordinate at the bottom annotion.
- */
-@interface CKBottomCluster : CKCluster
-
-@end
-
 NS_ASSUME_NONNULL_END
 
